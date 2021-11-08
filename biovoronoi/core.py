@@ -6,7 +6,7 @@ class Core:
     def set_structure(self, structure):
         self.structure = structure
 
-    def calculate_voronoi_points(self):
+    def valculate_voronoi_obejct(self):
         atoms = self.structure.get_atoms()
         atom_coordinates = numpy.array([atom.get_coord() for atom in atoms])
         v = Voronoi(atom_coordinates)

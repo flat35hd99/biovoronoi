@@ -15,13 +15,13 @@ class TestCoreVolonoi(unittest.TestCase):
         )
         return super().setUp()
 
-    def test_calculate_voronoi_points(self):
+    def test_valculate_voronoi_obejct(self):
         core = Core()
         structure = PDBParser(QUIET=True).get_structure(
             "truncated_test_structure", self.truncated_pdb_file
         )
         core.set_structure(structure)
-        core.calculate_voronoi_points()
+        core.valculate_voronoi_obejct()
         voronoi_vertices = core.get_voronoi_vertices()
         expected = np.array(
             [
