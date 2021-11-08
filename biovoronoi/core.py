@@ -12,5 +12,5 @@ class Core:
         v = Voronoi(atom_coordinates)
         self.voronoi = v
 
-    def get_voronoi_points(self):
-        return self.voronoi.points
+    def get_voronoi_vertices(self):
+        return self.voronoi.vertices
