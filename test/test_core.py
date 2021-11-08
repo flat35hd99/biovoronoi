@@ -15,13 +15,13 @@ class TestCoreVolonoi(unittest.TestCase):
         )
         return super().setUp()
 
-    def test_valculate_voronoi_obejct(self):
+    def test_calculate_voronoi_obejct(self):
         core = Core()
         structure = PDBParser(QUIET=True).get_structure(
             "truncated_test_structure", self.truncated_pdb_file
         )
         core.set_structure(structure)
-        core.valculate_voronoi_obejct()
+        core.calculate_voronoi_obejct()
         voronoi_vertices = core.get_voronoi_vertices()
         expected = np.array(
             [
@@ -86,3 +86,38 @@ class TestCoreVolonoi(unittest.TestCase):
             dtype=float64,
         )
         testing.assert_array_equal(voronoi_vertices, expected)
+
+    def test_calculate_voronoi_volume(self):
+        core = Core()
+        structure = PDBParser(QUIET=True).get_structure(
+            "truncated_test_structure", self.truncated_pdb_file
+        )
+        core.set_structure(structure)
+        core.calculate_voronoi_obejct()
+        core.calculate_voronoi_volumes()
+        volumes = core.get_voronoi_volumes()
+
+        expected = np.array(
+            [
+                2217.668868555809,
+                72.15707488707689,
+                1986.5660227368594,
+                146.57551430790733,
+                47.35463601695278,
+                7.951857123595612,
+                2012.678635919175,
+                233.16042763693022,
+                150.31327544655827,
+                27.927088181836062,
+                78.41902701036945,
+                43.722018324150255,
+                3938.217866436166,
+                203.53393779823216,
+                74.75869837187788,
+                35.61488097333656,
+                77.63156398167348,
+                1053.3992398337455,
+            ],
+            dtype=np.float64,
+        )
+        testing.assert_array_equal(expected, volumes)
