@@ -1,0 +1,2 @@
+include versioneer.py
+include biovoronoi/_version.py
