@@ -1,4 +1,6 @@
 import unittest
+
+import pandas as pd
 from biovoronoi.core import Core
 from Bio.PDB import PDBParser
 import os
@@ -13,14 +15,20 @@ class TestCoreVolonoi(unittest.TestCase):
         self.truncated_pdb_file = (
             f"{os.path.dirname(os.path.abspath(__file__))}/assets/truncated.pdb"
         )
+        self.include_water_pdb_file = "{}/assets/hp36_include_water.pdb".format(
+            os.path.dirname(os.path.abspath(__file__))
+        )
+        self.truncated_structure = PDBParser(QUIET=True).get_structure(
+            "truncated_test_structure", self.truncated_pdb_file
+        )
+        self.include_water_structure = PDBParser(QUIET=True).get_structure(
+            "hp36_include_water", self.include_water_pdb_file
+        )
         return super().setUp()
 
     def test_calculate_voronoi_obejct(self):
         core = Core()
-        structure = PDBParser(QUIET=True).get_structure(
-            "truncated_test_structure", self.truncated_pdb_file
-        )
-        core.set_structure(structure)
+        core.set_structure(self.truncated_structure)
         core.calculate_voronoi_obejct()
         voronoi_vertices = core.get_voronoi_vertices()
         expected = np.array(
@@ -87,12 +95,9 @@ class TestCoreVolonoi(unittest.TestCase):
         )
         testing.assert_array_equal(voronoi_vertices, expected)
 
-    def test_calculate_voronoi_volume(self):
+    def test_calculate_voronoi_volume_without_water(self):
         core = Core()
-        structure = PDBParser(QUIET=True).get_structure(
-            "truncated_test_structure", self.truncated_pdb_file
-        )
-        core.set_structure(structure)
+        core.set_structure(self.truncated_structure)
         core.calculate_voronoi_obejct()
         core.calculate_voronoi_volumes()
         volumes = core.get_voronoi_volumes()
@@ -121,3 +126,60 @@ class TestCoreVolonoi(unittest.TestCase):
             dtype=np.float64,
         )
         testing.assert_array_equal(expected, volumes)
+
+    @unittest.skip("Calculation of voronoi volume within waters takes a long time")
+    def test_voronoi_volume_with_water(self):
+        core = Core()
+        core.set_structure(self.include_water_structure)
+        core.calculate_voronoi_obejct()
+        core.calculate_voronoi_volumes()
+        volumes = core.get_voronoi_volumes()
+        print(volumes)
+
+    def test_create_df(self):
+        core = Core()
+        core.set_structure(self.truncated_structure)
+        core.calculate_voronoi_obejct()
+        core.calculate_voronoi_volumes()
+        core.create_df()
+        df = core.get_df()
+
+        expected = pd.DataFrame(
+            [
+                ["CA", 1, "THR", 5, 2217.668869],
+                ["C", 2, "THR", 5, 72.157075],
+                ["O", 3, "THR", 5, 1986.566023],
+                ["N", 4, "SER", 6, 146.575514],
+                ["CA", 5, "SER", 6, 47.354636],
+                ["C", 6, "SER", 6, 7.951857],
+                ["O", 7, "SER", 6, 2012.678636],
+                ["CB", 8, "SER", 6, 233.160428],
+                ["OG", 9, "SER", 6, 150.313275],
+                ["N", 10, "GLN", 7, 27.927088],
+                ["CA", 11, "GLN", 7, 78.419027],
+                ["C", 12, "GLN", 7, 43.722018],
+                ["O", 13, "GLN", 7, 3938.217866],
+                ["CB", 14, "GLN", 7, 203.533938],
+                ["CG", 15, "GLN", 7, 74.758698],
+                ["CD", 16, "GLN", 7, 35.614881],
+                ["OE1", 17, "GLN", 7, 77.631564],
+                ["NE2", 18, "GLN", 7, 1053.399240],
+            ],
+            columns=[
+                "atom_name",
+                "atom_serial_number",
+                "residue_name",
+                "residue_id",
+                "volume",
+            ],
+        )
+        pd.testing.assert_frame_equal(expected, df)
+
+    def test_create_df_with_water(self):
+        core = Core()
+        core.set_structure(self.include_water_structure)
+        core.calculate_voronoi_obejct()
+        core.calculate_voronoi_volumes()
+        core.create_df()
+        df = core.get_df()
+        print(df.head())
