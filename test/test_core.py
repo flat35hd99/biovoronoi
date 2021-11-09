@@ -175,6 +175,7 @@ class TestCoreVolonoi(unittest.TestCase):
         )
         pd.testing.assert_frame_equal(expected, df)
 
+    @unittest.skip
     def test_create_df_with_water(self):
         core = Core()
         core.set_structure(self.include_water_structure)
@@ -182,4 +183,25 @@ class TestCoreVolonoi(unittest.TestCase):
         core.calculate_voronoi_volumes()
         core.create_df()
         df = core.get_df()
+        print(df.head())
+
+    def test_create_residue_volume(self):
+        core = Core()
+        core.set_structure(self.truncated_structure)
+        core.calculate_voronoi_obejct()
+        core.calculate_voronoi_volumes()
+        core.create_df()
+        core.groupby_residue()
+        df = core.get_residue_df()
+        print(df.head())
+
+    @unittest.skip
+    def test_create_residue_volume_with_water(self):
+        core = Core()
+        core.set_structure(self.include_water_structure)
+        core.calculate_voronoi_obejct()
+        core.calculate_voronoi_volumes()
+        core.create_df()
+        core.groupby_residue()
+        df = core.get_residue_df()
         print(df.head())

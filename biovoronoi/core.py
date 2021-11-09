@@ -43,6 +43,10 @@ class Core:
         df = pd.DataFrame(data)
         self.df = df
 
+    def groupby_residue(self):
+        residue_df = self.df.groupby(["residue_id", "residue_name"]).sum()
+        self.residue_df = residue_df
+
     def get_voronoi_vertices(self):
         return self.voronoi.vertices
 
@@ -54,3 +58,6 @@ class Core:
 
     def get_df(self):
         return self.df
+
+    def get_residue_df(self):
+        return self.residue_df
