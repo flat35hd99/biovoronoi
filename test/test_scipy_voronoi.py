@@ -93,9 +93,10 @@ class TestVoronoi(unittest.TestCase):
 
     def test_voronoi_volume_with_3x3x3_cell(self):
         voronoi_object = Voronoi(self.cells_of_3x3x3)
+        center_point = 13
         convex = ConvexHull(
             voronoi_object.vertices[
-                voronoi_object.regions[voronoi_object.point_region[13]]
+                voronoi_object.regions[voronoi_object.point_region[center_point]]
             ]
         )
         expected = float(1.0)

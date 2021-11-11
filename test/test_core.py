@@ -169,7 +169,7 @@ class TestCoreVolonoi(unittest.TestCase):
                 "atom_name",
                 "atom_serial_number",
                 "residue_name",
-                "residue_id",
+                "residue_number",
                 "volume",
             ],
         )
